@@ -12,7 +12,7 @@ static void ProcessDirectory(string aBaseName, string aDirName, int aLevel = 0);
 static void PrintDirectory(string aBaseName, string aDirName, int aLevel);
 static string GetFileContent(string aBaseName, string aFileName);
 static string Indent(int aLevel);
-static string TypeTrim(string type);
+static string TypeTrim(string aType);
 static string MakePath(string aBase, string aLast);
 
 
@@ -33,21 +33,17 @@ int main(int argc, char *argv[])
 
 static void ProcessDirectory(string aBaseName, string aDirName, int aLevel)
 {
-    DIR *dir;
-    struct dirent *dp;
-
     string path = MakePath(aBaseName, aDirName);
-    dir = opendir(path.c_str());
+    DIR *dir = opendir(path.c_str());
     if (!dir)
         return;
 
     PrintDirectory(aBaseName, aDirName, aLevel);
 
+    struct dirent *dp;
     while ((dp = readdir(dir))) {
-        // skip all files and all folders whose name starts with a dot
-        if (dp->d_name[0] == '.' || dp->d_type != DT_DIR)
-            continue;
-        ProcessDirectory(aBaseName, dp->d_name, aLevel + 1);
+        if (dp->d_type == DT_DIR && dp->d_name[0] != '.')
+            ProcessDirectory(path, dp->d_name, aLevel + 1);
     }
     closedir(dir);
 }
@@ -69,7 +65,7 @@ static void PrintDirectory(string aBaseName, string aDirName, int aLevel)
     } else if (cgtype == "threaded") {
         string fContent = GetFileContent(fullName, "cgroup.threads");
         if (!fContent.empty())
-        cout << Indent(aLevel) << "TIDS: {" << fContent << "}" << endl;
+            cout << Indent(aLevel) << "TIDS: {" << fContent << "}" << endl;
     }
 }
 
@@ -99,13 +95,13 @@ static string Indent(int aLevel)
     return os.str();
 }
 
-static string TypeTrim(string type)
+static string TypeTrim(string aType)
 {
-    return (type == "domain")
+    return (aType == "domain")
                 ? "d"
-                : (type == "threaded")
+                : (aType == "threaded")
                         ? "t"
-                        : (type == "domain threaded")
+                        : (aType == "domain threaded")
                             ? "dt"
                             : "di";
 }
