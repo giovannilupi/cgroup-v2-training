@@ -8,6 +8,14 @@
 
 using namespace std;
 
+#define RED     "\033[31m"
+#define GREEN   "\033[32m"
+#define YELLOW  "\033[33m"
+#define BLUE    "\033[34m"
+#define MAGENTA "\033[35m"
+
+#define CLEAR   "\033[0m"
+
 static void ProcessDirectory(string aBaseName, string aDirName, int aLevel = 0);
 static void PrintDirectory(string aBaseName, string aDirName, int aLevel);
 static string GetFileContent(string aBaseName, string aFileName);
@@ -54,18 +62,18 @@ static void PrintDirectory(string aBaseName, string aDirName, int aLevel)
     string cgtype = GetFileContent(fullName, "cgroup.type");
     string subtreeCtrl = GetFileContent(fullName, "cgroup.subtree_control");
 
-    cout << Indent(aLevel) << aDirName << "  [" << TypeTrim(cgtype) << "]";
+    cout << Indent(aLevel) << aDirName << "  [" << MAGENTA << TypeTrim(cgtype) << CLEAR << "]";
     if (!subtreeCtrl.empty())
         cout << " (" << subtreeCtrl << ")";
     cout << endl;
     if (cgtype == "domain" || cgtype == "domain threaded") {
         string fContent = GetFileContent(fullName, "cgroup.procs");
         if (!fContent.empty())
-            cout << Indent(aLevel) << "PIDS: {" << fContent << "}" << endl;
+            cout << Indent(aLevel) << "PIDS: {" << GREEN << fContent << CLEAR << "}" << endl;
     } else if (cgtype == "threaded") {
         string fContent = GetFileContent(fullName, "cgroup.threads");
         if (!fContent.empty())
-            cout << Indent(aLevel) << "TIDS: {" << fContent << "}" << endl;
+            cout << Indent(aLevel) << "TIDS: {" << RED << fContent << CLEAR << "}" << endl;
     }
 }
 
