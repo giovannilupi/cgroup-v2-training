@@ -62,18 +62,18 @@ static void PrintDirectory(string aBaseName, string aDirName, int aLevel)
     string cgtype = GetFileContent(fullName, "cgroup.type");
     string subtreeCtrl = GetFileContent(fullName, "cgroup.subtree_control");
 
-    cout << Indent(aLevel) << aDirName << "  [" << MAGENTA << TypeTrim(cgtype) << CLEAR << "]";
+    cout << Indent(aLevel) << aDirName << MAGENTA << "  [" << TypeTrim(cgtype) << "]" << CLEAR;
     if (!subtreeCtrl.empty())
         cout << " (" << subtreeCtrl << ")";
     cout << endl;
     if (cgtype == "domain" || cgtype == "domain threaded") {
         string fContent = GetFileContent(fullName, "cgroup.procs");
         if (!fContent.empty())
-            cout << Indent(aLevel) << "PIDS: {" << GREEN << fContent << CLEAR << "}" << endl;
+            cout << Indent(aLevel) << GREEN << "PIDS: {" << fContent << "}" << CLEAR << endl;
     } else if (cgtype == "threaded") {
         string fContent = GetFileContent(fullName, "cgroup.threads");
         if (!fContent.empty())
-            cout << Indent(aLevel) << "TIDS: {" << RED << fContent << CLEAR << "}" << endl;
+            cout << Indent(aLevel) << RED << "TIDS: {" << fContent << "}" << CLEAR << endl;
     }
 }
 
