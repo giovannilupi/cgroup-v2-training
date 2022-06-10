@@ -38,6 +38,9 @@ cat /sys/kernel/cgroup/delegate | while read line ; do
     chown $USR:$USR $CGDIR/delegcgrp/$line
 done
 
+sleep 4
+
 echo ""
 echo "Moving user process into the root of the delegated subtree"
 echo $UPID > $CGDIR/delegcgrp/cgroup.procs
+sleep 5
